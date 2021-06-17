@@ -1,4 +1,4 @@
-# Integration Payment Pateway with PURE PHP - PHPUNIT TEST
+# Integration Payment Gateway with PURE PHP - PHPUNIT TEST
 
 Execute with phpunit
 
