@@ -135,11 +135,4 @@ class MultiplePaymentGatewaysTest extends TestCase
 
         $this->assertEquals(200, $paymentReversed->getStatusCode());
     }
-
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        unset($this->address, $this->customer, $this->store, $this->shippingCompany, $this->products,
-            $this->order, $this->payment, $this->cielo, $this->fpay, $this->creditCard);
-    }
 }
