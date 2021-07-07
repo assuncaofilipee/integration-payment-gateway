@@ -64,7 +64,10 @@ class MultiplePaymentGatewaysTest extends TestCase
         $this->fpay = new FPay();
     }
 
-    public function test_can_be_paid_credit_card_by_cielo(): void
+    /**
+     * @test
+     */
+    public function it_can_be_paid_credit_card_by_cielo(): void
     {
         $paymentReturn = json_decode($this->payment->payCreditCard($this->cielo, $this->order->merchantOrderId, $this->customer,
             50.000, $this->creditCard, 1, 'ByMerchant'));
@@ -72,65 +75,83 @@ class MultiplePaymentGatewaysTest extends TestCase
         $this->assertEquals(201, $paymentReturn->status);
     }
 
-   public function test_can_be_paid_credit_card_by_fpay(): void
-   {
-       $this->creditCard->__set("expirationDate", "09/28");
+    /**
+     * @test
+     */
+    public function it_can_be_paid_credit_card_by_fpay(): void
+    {
+        $this->creditCard->__set("expirationDate", "09/28");
 
-       $paymentReturn = json_decode($this->payment->payCreditCard($this->fpay, $this->order->merchantOrderId,
-           $this->customer, 50.00, $this->creditCard, 1, 'AV'));
+        $paymentReturn = json_decode($this->payment->payCreditCard($this->fpay, $this->order->merchantOrderId,
+            $this->customer, 50.00, $this->creditCard, 1, 'AV'));
 
-       $this->assertEquals(true, $paymentReturn->success);
-   }
+        $this->assertEquals(true, $paymentReturn->success);
+    }
 
-   public function test_can_be_get_payment_cielo()
-   {
-       $paymentReturn = json_decode($this->payment->payCreditCard($this->cielo, $this->order->merchantOrderId, $this->customer,
-           50.000, $this->creditCard, 1, 'ByMerchant'))->data;
+    /**
+     * @test
+     */
+    public function it_can_be_get_payment_cielo()
+    {
+        $paymentReturn = json_decode($this->payment->payCreditCard($this->cielo, $this->order->merchantOrderId, $this->customer,
+            50.000, $this->creditCard, 1, 'ByMerchant'))->data;
 
-       $paymentGatted = json_decode($this->payment->getTransaction($this->cielo, $paymentReturn->Payment->PaymentId));
+        $paymentGatted = json_decode($this->payment->getTransaction($this->cielo, $paymentReturn->Payment->PaymentId));
 
-       $this->assertObjectHasAttribute("AuthorizationCode", $paymentGatted->data->Payment);
-   }
+        $this->assertObjectHasAttribute("AuthorizationCode", $paymentGatted->data->Payment);
+    }
 
-   public function test_can_be_get_payment_fpay()
-   {
-       $this->creditCard->__set("expirationDate", "09/28");
+    /**
+     * @test
+     */
+    public function it_can_be_get_payment_fpay()
+    {
+        $this->creditCard->__set("expirationDate", "09/28");
 
-       $paymentReturn = json_decode($this->payment->payCreditCard($this->fpay, $this->order->merchantOrderId,
-           $this->customer, 50.00, $this->creditCard, 1, 'AV'));
+        $paymentReturn = json_decode($this->payment->payCreditCard($this->fpay, $this->order->merchantOrderId,
+            $this->customer, 50.00, $this->creditCard, 1, 'AV'));
 
-       $paymentGatted = $this->payment->getTransaction($this->fpay, $paymentReturn->data->fid);
+        $paymentGatted = $this->payment->getTransaction($this->fpay, $paymentReturn->data->fid);
 
-       $this->assertStringContainsString("nu_referencia", $paymentGatted);
-   }
+        $this->assertStringContainsString("nu_referencia", $paymentGatted);
+    }
 
-   public function test_can_be_reverse_payment_cielo()
-   {
-       $paymentReturn = json_decode($this->payment->payCreditCard($this->cielo, $this->order->merchantOrderId, $this->customer,
-           50.000, $this->creditCard, 1, 'ByMerchant'))->data;
+    /**
+     * @test
+     */
+    public function it_can_be_reverse_payment_cielo()
+    {
+        $paymentReturn = json_decode($this->payment->payCreditCard($this->cielo, $this->order->merchantOrderId, $this->customer,
+            50.000, $this->creditCard, 1, 'ByMerchant'))->data;
 
-       $paymentReversed = $this->payment->reverseTransaction('PUT', $this->cielo, $paymentReturn->Payment->PaymentId);
+        $paymentReversed = $this->payment->reverseTransaction('PUT', $this->cielo, $paymentReturn->Payment->PaymentId);
 
-       $this->assertEquals(200, $paymentReversed->getStatusCode());
-   }
+        $this->assertEquals(200, $paymentReversed->getStatusCode());
+    }
 
-   public function test_can_be_reverse_payment_fpay()
-   {
-       $this->creditCard->__set("expirationDate", "09/28");
+    /**
+     * @test
+     */
+    public function it_can_be_reverse_payment_fpay()
+    {
+        $this->creditCard->__set("expirationDate", "09/28");
 
-       $paymentReturn = json_decode($this->payment->payCreditCard($this->fpay, $this->order->merchantOrderId,
-           $this->customer, 50.00, $this->creditCard, 1, 'AV'))->data;
+        $paymentReturn = json_decode($this->payment->payCreditCard($this->fpay, $this->order->merchantOrderId,
+            $this->customer, 50.00, $this->creditCard, 1, 'AV'))->data;
 
-       $paymentReversed =  $this->payment->reverseTransaction('DELETE', $this->fpay, $paymentReturn->fid);
+        $paymentReversed =  $this->payment->reverseTransaction('DELETE', $this->fpay, $paymentReturn->fid);
 
-       $this->assertEquals(200, $paymentReversed->getStatusCode());
-   }
+        $this->assertEquals(200, $paymentReversed->getStatusCode());
+    }
 
-   public function test_failure_paid_credit_card_by_cielo()
-   {
-       $paymentReturn = $this->payment->payCreditCard($this->cielo, $this->order->merchantOrderId, $this->customer,
-           50.000, $this->creditCard, 'ss', 'ByMerchant');
+    /**
+     * @test
+     */
+    public function it_failure_paid_credit_card_by_cielo()
+    {
+        $paymentReturn = $this->payment->payCreditCard($this->cielo, $this->order->merchantOrderId, $this->customer,
+            50.000, $this->creditCard, 'ss', 'ByMerchant');
 
-       $this->assertEquals(true, $paymentReturn->success);
-   }
+        $this->assertEquals(true, $paymentReturn->success);
+    }
 }
